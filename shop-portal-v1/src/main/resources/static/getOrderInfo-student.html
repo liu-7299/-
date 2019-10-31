@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE">
+	<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+	<title>结算页</title>
+
+	<link rel="stylesheet" href="/js/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="/js/webCss/css/webbase.css" />
+	<link rel="stylesheet" type="text/css" href="/js/webCss/css/pages-getOrderInfo.css" />
+</head>
+
+<body>
+<!--head-->
+<div id="navHtml"></div>
+
+<div class="cart py-container" id="body">
+	<!--logoArea-->
+	<div class="logoArea">
+		<div class="fl logo"><span class="title">结算页</span></div>
+		<div class="fr search">
+			<form class="sui-form form-inline">
+				<div class="input-append">
+					<input type="text" type="text" class="input-error input-xxlarge" placeholder="品优购自营" />
+					<button class="sui-btn btn-xlarge btn-danger" type="button">搜索</button>
+				</div>
+			</form>
+		</div>
+	</div>
+	<!--主内容-->
+	<div class="checkout py-container">
+		<div class="checkout-tit">
+			<h4 class="tit-txt">填写并核对订单信息</h4>
+		</div>
+		<div class="checkout-steps">
+			<!--收件人信息-->
+			<div class="step-tit">
+				<h5>收件人信息<span><a href="javascript:void(0)" onclick="addSite()">新增收货地址</a></span></h5>
+			</div>
+			<div class="step-cont">
+				<div class="addressInfo">
+					<ul class="addr-detail">
+						<li class="addr-item" id="site">
+						</li>
+					</ul>
+					<!--添加地址-->
+					<div  tabindex="-1" role="dialog" data-hasfoot="false" class="sui-modal hide fade edit">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<button type="button" data-dismiss="modal" aria-hidden="true" class="sui-close">×</button>
+									<h4 id="myModalLabel" class="modal-title">添加收货地址</h4>
+								</div>
+								<div class="modal-body">
+									<form action="" class="sui-form form-horizontal">
+										<div class="control-group">
+											<label class="control-label">收货人：</label>
+											<div class="controls">
+												<input type="text" class="input-medium">
+											</div>
+										</div>
+
+										<div class="control-group">
+											<label class="control-label">详细地址：</label>
+											<div class="controls">
+												<input type="text" class="input-large">
+											</div>
+										</div>
+										<div class="control-group">
+											<label class="control-label">联系电话：</label>
+											<div class="controls">
+												<input type="text" class="input-medium">
+											</div>
+										</div>
+										<div class="control-group">
+											<label class="control-label">邮箱：</label>
+											<div class="controls">
+												<input type="text" class="input-medium">
+											</div>
+										</div>
+										<div class="control-group">
+											<label class="control-label">地址别名：</label>
+											<div class="controls">
+												<input type="text" class="input-medium">
+											</div>
+											<div class="othername">
+												建议填写常用地址：<a href="#" class="sui-btn btn-default">家里</a>　<a href="#" class="sui-btn btn-default">父母家</a>　<a href="#" class="sui-btn btn-default">公司</a>
+											</div>
+										</div>
+
+									</form>
+
+
+								</div>
+								<div class="modal-footer">
+									<button type="button" data-ok="modal" class="sui-btn btn-primary btn-large">确定</button>
+									<button type="button" data-dismiss="modal" class="sui-btn btn-default btn-large">取消</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!--确认地址-->
+				</div>
+				<div class="hr"></div>
+
+			</div>
+			<div class="hr"></div>
+			<!--支付和送货-->
+			<div class="payshipInfo">
+				<div class="step-tit">
+					<h5>支付方式</h5>
+				</div>
+				<div class="step-cont">
+					<ul class="payType">
+						<li class="selected" name="payWay">微信付款<span title="点击取消选择"></span></li>
+						<input type="hidden" value="1">
+						<li  name="payWay">货到付款<span title="点击取消选择"></span></li>
+						<input type="hidden" value="2">
+					</ul>
+				</div>
+				<div class="hr"></div>
+				<div class="step-tit">
+					<h5>送货清单</h5>
+				</div>
+				<div id="cartBody">
+
+				</div>
+				<div style="display: none" id="cartNone">
+					<div class="step-cont">
+						<ul class="send-detail">
+							<li>
+								<div class="sendGoods">
+									<ul class="yui3-g">
+										<li class="yui3-u-1-6">
+											<input type="hidden" value="##commId##">
+											<span><img src="##imgPath##"/></span>
+										</li>
+										<li class="yui3-u-7-12">
+											<div class="desc">##name##</div>
+											<div class="seven">7天无理由退货</div>
+										</li>
+										<li class="yui3-u-1-12">
+											<div class="price">￥##price##</div>
+										</li>
+										<li class="yui3-u-1-12">
+											<div class="num">X##count##</div>
+										</li>
+										<li class="yui3-u-1-12">
+											<div class="exit">有货</div>
+										</li>
+									</ul>
+								</div>
+							</li>
+						</ul>
+					</div>
+				</div>
+				<div class="hr"></div>
+			</div>
+			<div class="linkInfo">
+				<div class="step-tit">
+					<h5>发票信息</h5>
+				</div>
+				<div class="step-cont">
+					<span>普通发票（电子）</span>
+					<span>个人</span>
+					<span>明细</span>
+					<span>
+						<input type="radio" name="invoice" value="1">需要
+						<input type="radio" name="invoice" value="2">不需要
+					</span>
+				</div>
+			</div>
+			<div class="cardInfo">
+				<div class="step-tit">
+					<h5>使用优惠/抵用</h5>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="order-summary">
+		<div class="static fr" id="item">
+			<div class="list">
+				<span><i class="number">##count##</i>件商品，总商品金额</span>
+				<em class="allprice">¥##price##</em>
+			</div>
+			<div class="list">
+				<span>返现：</span>
+				<em class="money">0.00</em>
+			</div>
+			<div class="list">
+				<span>运费：</span>
+				<em class="transport">0.00</em>
+			</div>
+		</div>
+	</div>
+	<div class="clearfix trade">
+		<div class="fc-price">应付金额:　<span class="price">¥5399.00</span></div>
+		<div class="fc-receiverInfo" id="siteText">寄送至:北京市海淀区三环内 中关村软件园9号楼 收货人：某某某 159****3201</div>
+	</div>
+	<div class="submit">
+		<a class="sui-btn btn-danger btn-xlarge" href="javascript:void(0)" onclick="addOrder()">提交订单</a>
+	</div>
+</div>
+<!-- 底部栏位 -->
+<!--页面底部-->
+<div class="clearfix footer">
+	<div class="py-container">
+		<div class="footlink">
+			<div class="Mod-service">
+				<ul class="Mod-Service-list">
+					<li class="grid-service-item intro  intro1">
+
+						<i class="serivce-item fl"></i>
+						<div class="service-text">
+							<h4>正品保障</h4>
+							<p>正品保障，提供发票</p>
+						</div>
+
+					</li>
+					<li class="grid-service-item  intro intro2">
+
+						<i class="serivce-item fl"></i>
+						<div class="service-text">
+							<h4>正品保障</h4>
+							<p>正品保障，提供发票</p>
+						</div>
+
+					</li>
+					<li class="grid-service-item intro  intro3">
+
+						<i class="serivce-item fl"></i>
+						<div class="service-text">
+							<h4>正品保障</h4>
+							<p>正品保障，提供发票</p>
+						</div>
+
+					</li>
+					<li class="grid-service-item  intro intro4">
+
+						<i class="serivce-item fl"></i>
+						<div class="service-text">
+							<h4>正品保障</h4>
+							<p>正品保障，提供发票</p>
+						</div>
+
+					</li>
+					<li class="grid-service-item intro intro5">
+
+						<i class="serivce-item fl"></i>
+						<div class="service-text">
+							<h4>正品保障</h4>
+							<p>正品保障，提供发票</p>
+						</div>
+
+					</li>
+				</ul>
+			</div>
+			<div class="clearfix Mod-list">
+				<div class="yui3-g">
+					<div class="yui3-u-1-6">
+						<h4>购物指南</h4>
+						<ul class="unstyled">
+							<li>购物流程</li>
+							<li>会员介绍</li>
+							<li>生活旅行/团购</li>
+							<li>常见问题</li>
+							<li>购物指南</li>
+						</ul>
+
+					</div>
+					<div class="yui3-u-1-6">
+						<h4>配送方式</h4>
+						<ul class="unstyled">
+							<li>上门自提</li>
+							<li>211限时达</li>
+							<li>配送服务查询</li>
+							<li>配送费收取标准</li>
+							<li>海外配送</li>
+						</ul>
+					</div>
+					<div class="yui3-u-1-6">
+						<h4>支付方式</h4>
+						<ul class="unstyled">
+							<li>货到付款</li>
+							<li>在线支付</li>
+							<li>分期付款</li>
+							<li>邮局汇款</li>
+							<li>公司转账</li>
+						</ul>
+					</div>
+					<div class="yui3-u-1-6">
+						<h4>售后服务</h4>
+						<ul class="unstyled">
+							<li>售后政策</li>
+							<li>价格保护</li>
+							<li>退款说明</li>
+							<li>返修/退换货</li>
+							<li>取消订单</li>
+						</ul>
+					</div>
+					<div class="yui3-u-1-6">
+						<h4>特色服务</h4>
+						<ul class="unstyled">
+							<li>夺宝岛</li>
+							<li>DIY装机</li>
+							<li>延保服务</li>
+							<li>品优购E卡</li>
+							<li>品优购通信</li>
+						</ul>
+					</div>
+					<div class="yui3-u-1-6">
+						<h4>帮助中心</h4>
+						<img src="img/wx_cz.jpg">
+					</div>
+				</div>
+			</div>
+			<div class="Mod-copyright">
+				<ul class="helpLink">
+					<li>关于我们<span class="space"></span></li>
+					<li>联系我们<span class="space"></span></li>
+					<li>关于我们<span class="space"></span></li>
+					<li>商家入驻<span class="space"></span></li>
+					<li>营销中心<span class="space"></span></li>
+					<li>友情链接<span class="space"></span></li>
+					<li>关于我们<span class="space"></span></li>
+					<li>营销中心<span class="space"></span></li>
+					<li>友情链接<span class="space"></span></li>
+					<li>关于我们</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+<!--页面底部END-->
+	<div style="display: none" id="siteNode"><!-- onclick="radioClick(this)" ##selected## -->
+		<div>
+			<div class="con name ##selected##"  name="radioDiv" onclick="radioClick(this,'##id##')"><a href="javascript:;">##name##<span title="点击取消选择">&nbsp;</span></a></div>
+			<input type="hidden" value="##id##">
+			<div class="con address">##info##  <span>##phone##</span>
+				##d##
+				<span class="edittext"><a href="javascript:;" onclick="updateSite('##id##')">编辑</a>&nbsp;&nbsp;<a href="javascript:;" onclick="deleteSiteByMemberId('##id##')">删除</a></span>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+	</div>
+	<div id="siteStr" style="display: none">
+		<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<form class="form-horizontal">
+					<div class="form-group">
+						<label class="col-sm-2 control-label">收货人姓名</label>
+						<div class="col-sm-4"><!-- form-inline -->
+							<input type="text" id="name" class="form-control" placeholder="请输入收货人姓名">
+						</div>
+						<div style="margin-top: 8px;font-size: 15px;color: red">
+							<span name="verifySpan" id="userNameSpan"></span></div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">收货人手机</label>
+						<div class="col-sm-4">
+							<input type="text" id="phone" class="form-control" placeholder="请确认收货人手机">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">地区</label>
+						<div class="col-sm-8" id="region_pdiv">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">详细地址</label>
+						<div class="col-sm-4">
+							<input type="text" id="info" class="form-control" placeholder="请输入详细地址">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">设为默认地址</label>
+						<div class="col-sm-4">
+							<input type="radio" name="site" value="1">是
+							<input type="radio" name="site" value="2">否
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	</div>
+
+
+
+<!--<script type="text/javascript" src="/js/webCss/js/plugins/jquery/jquery.min.js"></script>-->
+<script src="/js/jquery-3.3.1.js"></script>
+<script type="text/javascript" src="/js/webCss/js/plugins/jquery.easing/jquery.easing.min.js"></script>
+<script type="text/javascript" src="/js/webCss/js/plugins/sui/sui.min.js"></script>
+<script type="text/javascript" src="/js/webCss/js/pages/getOrderInfo.js"></script>
+<script src="/js/bootstrap/js/bootstrap.min.js"></script>
+<script src="/js/jquery.cookie.min.js"></script>
+<script src="/js/bootbox/bootbox.min.js">//bootbox</script>
+<script src="/js/bootbox/bootbox.locales.min.js">//bootbox</script>
+<script src="/js/nav.js"></script>
+<script>
+	var siteStr = "";
+	$(function(){
+	    siteStr = $("#siteStr").html();
+	    $("#siteStr").html("");
+	    /*var arrStr = $.cookie("allArr");//购物车选择商品id
+	    var arr = arrStr.split(",");*/
+	    initBody();
+        querySite();
+        queryToKen();//请求toKen
+	})
+
+	function querySite(){
+        $.ajax({
+            url:"http://localhost:8081/sites/querySiteByMemberId",
+            success:function(ref){
+                if(ref.code == 200){
+                    var siteHtml = $("#siteNode").html();
+                    var list = ref.data;
+                    for(var i=0;i<list.length;i++){
+                        var site = list[i];
+                        var phone = site.phone.substring(0,3) + "****" + site.phone.substring(8);
+                        var html = siteHtml.replace(/##name##/g,site.name)
+                            .replace(/##info##/g,site.info)
+                            .replace(/##phone##/g,phone)
+                            .replace(/##id##/g,site.id);
+
+                        if(site.status == 1){
+                            html = html.replace(/##selected##/g,"selected")
+								.replace(/##d##/g,'<span class="base">默认地址</span>');
+                            $("#siteText").html("寄送至:"+site.info+" 收货人："+site.name+" " + phone);
+						}else{
+                            html = html.replace(/##d##/g,"");
+						}
+						$("#site").append(html);
+					}
+                    getCss();
+				}
+            }
+        })
+	}
+
+	function getCss(){
+        $(".address").hover(function(){
+            $(this).addClass("address-hover");
+        },function(){
+            $(this).removeClass("address-hover");
+        });/*
+        $(".addr-item .name").click(function(){
+            $(this).toggleClass("selected").siblings().removeClass("selected");
+        });
+        $(".payType li").click(function(){
+            $(this).toggleClass("selected").siblings().removeClass("selected");
+        });*/
+	}
+
+    function concatRegionSel(id,node){
+        $.ajax({
+            url:"http://localhost:8081/regions/pid/" + $(node).val(),
+            type:"get",
+			async:false,
+            success:function(ref){
+                if(ref.code == 200){
+                    var arr = ref.data;
+                    $(node).nextAll().remove();//.parent()
+                    if(arr.length > 0){
+                        var str = ''+
+                            '<select style="width: 120px" name="region_sel" class="form-control col-sm-3" onchange="concatRegionSel(\''+id+'\',this)">'+
+                            '<option value="1">==请选择==</option>';
+                        for(var i=0;i<arr.length;i++){
+                            str += "<option value='"+arr[i].id+"'>"+arr[i].name+"</option>";
+                        }
+                        str += '</select>';
+                        $("#"+id).append(str);
+                    }
+                }
+            }
+        })
+    }
+
+	function radioClick(node,id){
+	    setTimeout(function(){
+            $("div[name='radioDiv']").each(function(){
+                $(this).attr("class","con name");
+            })
+            $(node).attr("class","con name selected");
+            $.ajax({
+                url: "http://localhost:8081/sites/querySiteById?id=" + id,
+                success: function (ref) {
+                    if (ref.code == 200) {
+                        ref = ref.data;
+                        var phone = ref.phone.substring(0,3) + "****" + ref.phone.substring(8);
+						$("#siteText").html("寄送至:"+ref.info+" 收货人："+ref.name+" " + phone);
+                    }
+                }
+            })
+		})
+	}
+
+	function addSite(){
+        bootbox.dialog({
+            title: '添加地址',
+            backdrop:false,
+            message: siteStr,
+            size: 'large',//有效值为'large'和'small'
+            buttons: {
+                ok: {
+                    label: "<i class='glyphicon glyphicon-plus-sign'>添加",
+                    className: 'btn-info',
+                    callback: function (data) {//添加回调函数 $("#sdss").serialize()
+						var site = {};
+						site.name = $("#name").val();
+						site.phone = $("#phone").val();
+						site.status = $("input[name='site']:checked").val();
+						var length = $("#region_pdiv").find("select").length;
+                        var r1 = $("#region_pdiv").find("select:eq(0) :selected");
+                        var r2 = $("#region_pdiv").find("select:eq(1) :selected");
+                        var r3 = $("#region_pdiv").find("select:eq(2) :selected");
+						if(length == 3 && r3 != 1){
+							site.r1 = $(r1).val();
+							site.r2 = $(r2).val();
+							site.r3 = $(r3).val();
+                            site.info = $(r1).text() + $(r2).text() + $(r3).text() + " " + $("#info").val();
+							console.log(site)
+							$.post({
+								url:"http://localhost:8081/sites/addSite",
+								data:site,
+								success:function(ref){
+								    if(ref.code == 200){
+                                        $("#site").html("");
+                                        querySite();
+									}
+								}
+							})
+						}else{
+						    return false;
+						}
+                    }
+                },
+                cancel: {
+                    label: "<i class='glyphicon glyphicon-remove-sign'>关闭",
+                    className: 'btn-danger',
+                    callback: function (data) {//关闭回调函数
+                    }
+                },
+            },
+        })
+        concatRegionSel("region_pdiv","<input value='0'>");
+	}
+
+	function updateSite(id){
+        $.ajax({
+			url:"http://localhost:8081/sites/querySiteById?id=" + id,
+			success:function(ref){
+			    if(ref.code == 200){
+                    bootbox.dialog({
+                        title: '修改地址',
+                        backdrop:false,
+                        message: siteStr,
+                        size: 'large',//有效值为'large'和'small'
+                        buttons: {
+                            ok: {
+                                label: "<i class='glyphicon glyphicon-plus-sign'>修改",
+                                className: 'btn-info',
+                                callback: function (data) {//添加回调函数 $("#sdss").serialize()
+                                    var site = {};
+                                    site.id = id;
+                                    site.name = $("#name").val();
+                                    site.phone = $("#phone").val();
+                                    site.status = $("input[name='site']:checked").val();
+                                    var length = $("#region_pdiv").find("select").length;
+                                    var r1 = $("#region_pdiv").find("select:eq(0) :selected");
+                                    var r2 = $("#region_pdiv").find("select:eq(1) :selected");
+                                    var r3 = $("#region_pdiv").find("select:eq(2) :selected");
+                                    if(length == 3 && r3 != 1) {
+                                        site.r1 = $(r1).val();
+                                        site.r2 = $(r2).val();
+                                        site.r3 = $(r3).val();
+                                        site.info = $(r1).text() + $(r2).text() + $(r3).text() + " " + $("#info").val();
+                                        $.ajax({
+											url: "http://localhost:8081/sites/updateSite",
+											type:"put",
+											contentType:"application/json",
+                                            data: JSON.stringify(site),
+                                            success: function (ref) {
+                                                if (ref.code == 200) {
+                                                    $("#site").html("");
+                                                    querySite();
+                                                }
+                                            }
+                                        })
+                                    }
+                                }
+                            },
+                            cancel: {
+                                label: "<i class='glyphicon glyphicon-remove-sign'>关闭",
+                                className: 'btn-danger',
+                                callback: function (data) {//关闭回调函数
+                                }
+                            },
+                        },
+                    })
+					var site = ref.data;
+                    $("#name").val(site.name);
+                    $("#phone").val(site.phone);
+                    var i = site.info.lastIndexOf(" ");
+                    $("#info").val(site.info.substring(i+1));
+                    $("input[name=site]").each(function(){
+                        if($(this).val() == site.status){
+                            $(this).prop("checked",true);
+						}
+					})
+                    concatRegionSel("region_pdiv","<input value='0'>");
+                    $("#region_pdiv").find("select:eq(0)").val(site.r1);
+                    concatRegionSel("region_pdiv","<input value='"+site.r1+"'>");
+                    $("#region_pdiv").find("select:eq(1)").val(site.r2);
+                    concatRegionSel("region_pdiv","<input value='"+site.r2+"'>");
+                    $("#region_pdiv").find("select:eq(2)").val(site.r3);
+				}
+			}
+		})
+	}
+
+	function deleteSiteByMemberId(id){
+        $.ajax({
+			type:"delete",
+            url:"http://localhost:8081/sites/deleteSiteById?id=" + id,
+            success:function(ref){
+				if(ref.code == 200){
+					alert("成功");
+					$("#site").html("");
+                    querySite();
+				}
+			}
+		})
+	}
+	var toKen = "";
+	function queryToKen(){
+        $.ajax({
+            url: "http://localhost:8081/toKen",
+            success: function (ref) {
+                if (ref.code == 200) {//$.cookie("toKen",ref.data);
+                    toKen = ref.data;
+                }
+            }
+        })
+	}
+
+	function addOrder(){
+		var siteId = "";
+		var payWay = "";
+		$("div[name='radioDiv']").each(function(){
+			var divClass = $(this).attr("class");
+			if(divClass == "con name selected"){
+				siteId = $(this).next().val();
+			}
+		})
+		$("li[name='payWay']").each(function(){
+			var liClass = $(this).attr("class");
+			if(liClass == "selected"){
+				payWay = $(this).next().val();
+			}
+		})//&siteId=&payWay=
+		var invoice = $("input[name='invoice']:checked").val();
+		if(!invoice){
+			invoice = 2;
+		}
+		$.ajax({
+			url:"http://localhost:8081/orders/addOrder?payWay=" + payWay + "&siteId=" + siteId + "&invoice=" + invoice,
+            beforeSend:function(request){
+                var key = $.cookie("x-auth");
+                request.setRequestHeader("x-auth",key);
+                request.setRequestHeader("toKen",toKen);
+            },
+			success:function(ref){
+				if(ref.code == 200){
+					if(ref.data.list.length > 0){
+					    var v_data = ref.data.list;
+                        var html = "";
+                        for(var i=0;i<v_data.length;i++){
+                            var v_item = v_data[i];
+                            html += $("#cartNone").html().replace(/##name##/g,v_item.name)
+                                .replace(/##price##/g,v_item.price)
+                                .replace(/##count##/g,v_item.count)
+                                .replace(/##commId##/g,v_item.id);
+                        }
+                        bootbox.dialog({
+                            backdrop: false,
+                            message: html.replace(/有货/g,"缺货"),
+                            buttons: {
+                                ok: {
+                                    label: '确定',
+                                    className: 'btn btn-default',
+                                    callback:function(data){
+                                        var orderId = ref.data.orderId;
+                                        var payPrice = ref.data.payPrice;
+                                        $.cookie("orderId",orderId);
+                                        $.cookie("payPrice",payPrice);
+                                        location.href = "/pay-student.html";
+									}
+                                }
+                            },
+                        })
+					}else{
+                        var orderId = ref.data.orderId;
+                        var payPrice = ref.data.payPrice;
+                        $.cookie("orderId",orderId);
+                        $.cookie("payPrice",payPrice);
+                        location.href = "/pay-student.html";
+					}
+
+				}
+			}
+		})
+	}
+
+    function initBody(){
+        if(!login_status){
+            $("#body").html("");/* #cartBody */
+            $("#body").html('<div  class="cart-list" align="center" style="height: 250px;font-size: 50px"><div style="height: 50px"></div>您还没有登录，请先<a href="/login.html">登录</a>或<a href="/index-enroll.html">注册</a></div>');
+        }
+        if(login_status){
+            $.ajax({
+                url:"http://localhost:8081/carts/query",
+                success:function(ref){
+                    if(ref.code == 200){
+                        var v_cart  = ref.data;
+                        var v_data = v_cart.list;
+                        if(v_data.length != 0){
+                            var html = "";
+                            for(var i=0;i<v_data.length;i++){
+                                var v_item = v_data[i];
+                                html += $("#cartNone").html().replace(/##name##/g,v_item.name)
+                                    .replace(/##price##/g,v_item.price)
+                                    .replace(/##count##/g,v_item.count)
+                                    .replace(/##commId##/g,v_item.id);
+                            }
+                            $("#cartBody").html(html);
+                            $("#item").html(
+                                $("#item").html().replace(/##count##/g,v_cart.count).replace(/##price##/g,v_cart.price)
+							)
+                        }
+                    }else{
+                        $("#item").html("");
+                        $("#cartBody").html('<div  class="cart-list" align="center" style="height: 250px;font-size: 50px"><div style="height: 50px"></div>没有商品，<a href="/">去购买</a></div>');
+					}
+                }
+            })
+        }
+    }
+</script>
+</body>
+
+</html>
