@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fh.admin.mapper.IMemberMapper" >
+    <sql id="member_page">
+      <where>
+          <if test="userName != null and userName != ''">
+              and userName like CONCAT('%',#{userName},'%')
+          </if>
+          <if test="phone != null and phone != ''">
+              and phone like CONCAT('%',#{phone},'%')
+          </if>
+          <if test="birthdayMin != null">
+              and birthday >= #{birthdayMin}
+          </if>
+          <if test="birthdayMax != null">
+              and birthday &lt;= #{birthdayMax}
+          </if>
+          <if test="region1 != null and region1 != 1">
+              and region1 = #{region1}
+          </if>
+          <if test="region2 != null and region2 != 1">
+              and region2 = #{region2}
+          </if>
+          <if test="region3 != null and region3 != 1">
+              and region3 = #{region3}
+          </if>
+      </where>
+    </sql>
+
+    <select id="queryMemberCount" parameterType="com.fh.admin.param.MemberParam" resultType="java.lang.Long">
+        select count(*) from t_member
+        <include refid="member_page"></include>
+    </select>
+
+    <select id="queryMemberByPage" parameterType="com.fh.admin.param.MemberParam" resultType="com.fh.admin.po.Member">
+        select t.* from (
+          select m.id,userName,realName,phone,email,birthday,concat(r1.name,"→",r2.name,"→",r3.name) "regionName"
+          from t_member m
+				left join t_region r1 on m.region1 = r1.id
+				left join t_region r2 on m.region2 = r2.id
+				left join t_region r3 on m.region3 = r3.id
+				<include refid="member_page"></include>
+        )t
+    </select>
+
+</mapper>

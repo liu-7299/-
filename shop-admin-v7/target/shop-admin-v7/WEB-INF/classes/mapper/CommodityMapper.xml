@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fh.admin.mapper.ICommodityMapper" >
+	<!-- 分页条件 -->
+	<sql id="comm_page">
+		<where>
+			<if test="name != null and name != ''">
+				and tc.name LIKE CONCAT(CONCAT('%',#{name}),'%')
+			</if>
+			<if test="priceMax != null and priceMax >= 0">
+				and price &lt;= #{priceMax}
+			</if>
+			<if test="priceMin != null and priceMin >= 0">
+				and price >= #{priceMin}
+			</if>
+			<if test="createTimeMax != null and createTimeMax != ''">
+				and createTime &lt;= #{createTimeMax}
+			</if>
+			<if test="createTimeMin != null and createTimeMin != ''">
+				and createTime >= #{createTimeMin}
+			</if>
+			<if test="cate1 != null and cate1 != 0">
+				and cate1 = #{cate1}
+			</if>
+			<if test="cate2 != null and cate2 != 0">
+				and cate2 = #{cate2}
+			</if>
+			<if test="cate3 != null and cate3 != 0">
+				and cate3 = #{cate3}
+			</if>
+		</where>
+	</sql>
+	<!-- 查询数量 -->
+	<select id="queryCommCount" parameterType="com.fh.admin.param.CommodityParam" resultType="java.lang.Long">
+			select count(*) from t_commodity tc
+			left join t_brand tb on tc.brandId = tb.id
+			<include refid="comm_page"></include>
+	</select>
+	<!-- 分页查询 -->
+	<select id="queryCommodityPage" parameterType="com.fh.admin.param.CommodityParam" resultType="com.fh.admin.po.Commodity">
+			select t.* from (
+				select tc.id,tc.name,price,tc.imgPath,createTime,stock,status,brandId,tb.name "brandName",flName
+				from t_commodity tc
+				left join t_brand tb on tc.brandId = tb.id
+				<include refid="comm_page"></include>
+				order by tc.id desc
+				limit #{start},#{length}
+			) t
+	</select>
+	<select id="queryCommodityPam" parameterType="com.fh.admin.param.CommodityParam" resultType="com.fh.admin.po.Commodity">
+		select id,name,price,imgPath,createTime,stock,status,brandId,flName
+		from t_commodity
+		<include refid="comm_page"></include>
+		order by id desc
+	</select>
+	<!-- 增加
+	<insert id="addCommodity" parameterType="com.fh.admin.po.Commodity">
+		<selectKey keyProperty="id" resultType="java.lang.Long" order="AFTER">
+			select last_insert_id();
+		</selectKey>
+		insert into t_commodity
+		(name,price,imgPath,createTime,stock,status)
+		values(
+		#{name},
+		#{price},
+		#{imgPath},
+		#{createTime},
+		#{stock},
+		#{status}
+		)
+	</insert>
+	&lt;!&ndash; 删除单个 &ndash;&gt;
+	<delete id="deleteCommodity" parameterType="java.lang.Long">
+		delete from t_commodity
+		where id = #{id}
+	</delete>
+	&lt;!&ndash; 回显 &ndash;&gt;
+	<select id="queryCommodityById" parameterType="java.lang.Long" resultType="com.fh.admin.po.Commodity">
+		select id,name,price,imgPath,createTime,stock,status
+		from t_commodity
+		where id = #{id}
+	</select>
+	&lt;!&ndash; 修改 &ndash;&gt;
+	<update id="updateCommodity" parameterType="com.fh.admin.po.Commodity">
+		update t_commodity
+		<set>
+			<if test="name != null and name != ''">
+				name = #{name},
+			</if>
+			<if test="price != null and price != ''">
+				price = #{price},
+			</if>
+			<if test="imgPath != null and imgPath != ''">
+				imgPath = #{imgPath},
+			</if>
+			<if test="createTime != null and createTime != ''">
+				createTime = #{createTime},
+			</if>
+			<if test="stock != null and stock != ''">
+				stock = #{stock},
+			</if>
+			<if test="status != null and status != ''">
+				status = #{status},
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+	&lt;!&ndash; 所有 &ndash;&gt;
+	<select id="queryCommodity" resultType="com.fh.admin.po.Commodity">
+		select * from t_commodity
+	</select>-->
+</mapper>

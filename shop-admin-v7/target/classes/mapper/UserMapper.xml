@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fh.admin.mapper.IUserMapper" >
+	<!-- 分页条件 -->
+	<sql id="user_page">
+		<where>
+			<if test="userName != null and userName != ''">
+				and userName LIKE CONCAT('%',#{userName},'%')
+			</if>
+			<if test="realName != null and realName != ''">
+				and realName LIKE CONCAT('%',#{realName},'%')
+			</if>
+			<if test="ageMax != null and ageMax >= 0">
+				and age &lt;= #{ageMax}
+			</if>
+			<if test="ageMin != null and ageMin >= 0">
+				and age >= #{ageMin}
+			</if>
+			<if test="payMax != null and payMin >= 0">
+				and pay &lt;= #{payMax}
+			</if>
+			<if test="payMin != null and payMin >= 0">
+				and pay >= #{payMin}
+			</if>
+			<if test="entryTimeMax != null">
+				<![CDATA[ and entryTime <= #{entryTimeMax}]]>
+			</if>
+			<if test="entryTimeMin != null">
+				<![CDATA[ and entryTime >= #{entryTimeMin}]]>
+			</if>
+			<if test="checkboxStr != null and roleLength > 0">
+				and u.id in
+				(
+					select uuid from t_role_user where rrid in
+					<foreach collection="checkboxStr" item="roleId" open="(" separator="," close=")">
+						#{roleId}
+					</foreach>
+					group by uuid having count(*) = #{roleLength}
+				)
+			</if>
+			<if test="region1 != null and region1 != 1">
+				and region1 = #{region1}
+			</if>
+			<if test="region2 != null and region2 != 1">
+				and region2 = #{region2}
+			</if>
+			<if test="region3 != null and region3 != 1">
+				and region3 = #{region3}
+			</if>
+		</where>
+	</sql>
+	<!-- 登录 -->
+	<select id="queryUserByName" parameterType="java.lang.String" resultType="com.fh.admin.po.User">
+		select id,realName,userName,password,sex,age,phone,email,pay,entryTime,imgPath,loginCount,topLoginTime,errorCount,errorTime,salt
+		from t_user where userName = #{userName}
+	</select>
+	<!-- 增加 -->
+	<insert id="addUser" parameterType="com.fh.admin.po.User">
+	  <selectKey keyProperty="id" resultType="java.lang.Long" order="AFTER">
+		  select last_insert_id();
+	  </selectKey>
+	  insert into t_user
+	  (REALNAME,USERNAME,PASSWORD,SEX,AGE,PHONE,EMAIL,PAY,ENTRYTIME,IMGPATH,SALT,REGION1,REGION2,REGION3)
+	  values(
+			#{realName},
+			#{userName},
+			#{password},
+			#{sex},
+			#{age},
+			#{phone},
+			#{email},
+			#{pay},
+			#{entryTime},
+			#{imgPath},
+			#{salt},
+			#{region1},
+			#{region2},
+			#{region3}
+			)
+	</insert>
+	<!-- 全部用户 -->
+	<select id="queryUser" resultType="com.fh.admin.po.User">
+			select id,realName,userName,sex,age,phone,email,pay,entryTime,imgPath
+			from t_user
+	</select>
+	<!-- 查询用户数 -->
+	<select id="queryUserCount" parameterType="com.fh.admin.param.UserParam" resultType="java.lang.Long">
+			select count(*) from t_user u
+			<include refid="user_page"></include>
+	</select>
+	<!-- 分页查询 -->
+	<select id="queryUserByPage" parameterType="com.fh.admin.param.UserParam" resultType="com.fh.admin.po.User">
+			select t.* from (
+				select u.id,realName,userName,sex,age,phone,email,pay,entryTime,imgPath,errorTime,errorCount,region1,region2,region3,concat(r1.name,"→",r2.name,"→",r3.name) "regionName"
+				from t_user u
+				left join t_region r1 on u.region1 = r1.id
+				left join t_region r2 on u.region2 = r2.id
+				left join t_region r3 on u.region3 = r3.id
+				<include refid="user_page"></include>
+				order by u.id desc
+				limit #{start},#{length}
+			) t
+	</select>
+	<select id="queryUserByPam" parameterType="com.fh.admin.param.UserParam" resultType="com.fh.admin.po.User">
+		select t.* from (
+		select u.id,realName,userName,sex,age,phone,email,pay,entryTime,imgPath,errorTime,errorCount,region1,region2,region3,concat(r1.name,"→",r2.name,"→",r3.name) "regionName"
+		from t_user u
+		left join t_region r1 on u.region1 = r1.id
+		left join t_region r2 on u.region2 = r2.id
+		left join t_region r3 on u.region3 = r3.id
+		<include refid="user_page"></include>
+		order by u.id desc
+		) t
+	</select>
+	<!-- 回显 -->
+	<select id="queryUserById" parameterType="java.lang.Long" resultType="com.fh.admin.po.User">
+		select u.id,realName,userName,sex,age,phone,email,pay,entryTime,imgPath,region1,region2,region3,concat(r1.name,"→",r2.name,"→",r3.name) "regionName"
+		from t_user u
+				left join t_region r1 on u.region1 = r1.id
+				left join t_region r2 on u.region2 = r2.id
+				left join t_region r3 on u.region3 = r3.id
+		where u.id = #{id}
+	</select>
+	<!-- 删除单个 -->
+	<delete id="deleteUserById" parameterType="java.lang.Long">
+		delete from t_user
+		where id = #{id}
+	</delete>
+	<!-- 修改 -->
+	<update id="updateUser" parameterType="com.fh.admin.po.User">
+		update t_user
+		<set>
+			<if test="realName != null and realName != ''">
+				realName = #{realName},
+			</if>
+			<if test="password != null and password != ''">
+				password = #{password},
+			</if>
+			<if test="age != null and age != ''">
+				age = #{age},
+			</if>
+			<if test="sex != null and sex != ''">
+				sex = #{sex},
+			</if>
+			<if test="phone != null and phone != ''">
+				phone = #{phone},
+			</if>
+			<if test="email != null and email != ''">
+				email = #{email},
+			</if>
+			<if test="pay != null and pay != ''">
+				pay = #{pay},
+			</if>
+			<if test="entryTime != null">
+				entryTime = #{entryTime},
+			</if>
+			<if test="imgPath != null and imgPath != ''">
+				imgPath = #{imgPath},
+			</if>
+			<if test="region1 != null and region1 != 1">
+				region1 = #{region1},
+			</if>
+			<if test="region2 != null and region2 != 1">
+				region2 = #{region2},
+			</if>
+			<if test="region3 != null and region3 != 1">
+				region3 = #{region3},
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+	<!-- 批量删除 -->
+	<delete id="deleteAll">
+		delete from t_user where id in
+		<foreach collection="array" item="ids" open="(" separator="," close=")">
+			<!--collection表示类型，数组是array,集合是List,item 是一个变量名,open表示左括号,separator是逗号,close是右括号-->
+			#{ids}
+		</foreach>
+	</delete>
+	<!-- 通过用户id展示角色名 -->
+	<select id="queryRoleNameByUid" parameterType="java.lang.Long" resultType="java.lang.String">
+		select tr.name from t_role tr left join t_role_user tro on tro.rrid = tr.id
+		where tro.uuid = #{id};
+	</select>
+	<!-- 添加中间表 -->
+	<insert id="addRoleOrUser">
+	  insert into t_role_user
+	  (UUID,RRID)
+	  values(
+			#{uuid},
+			#{rrid}
+			)
+	</insert>
+	<!-- 通过用户id删除中间表 -->
+	<delete id="deleteRoleOrUserById" parameterType="java.lang.Long">
+		delete from t_role_user where uuid = #{id}
+	</delete>
+	<!-- 通过用户id查询角色id -->
+	<select id="queryRoleById" parameterType="java.lang.Long" resultType="java.lang.Integer">
+		select tr.id from t_role tr left join t_role_user tro on tr.id = tro.rrid
+		where tro.uuid = #{id}
+	</select>
+	<!-- 修改登录时间次数 -->
+	<update id="updateUserByTime" parameterType="com.fh.admin.po.User">
+		update t_user set loginCount = #{loginCount},topLoginTime = now(),errorCount = #{errorCount}
+		where id = #{id}
+	</update>
+	<!-- 修改错误次数时间 -->
+	<update id="updateUserByErrorTime" parameterType="com.fh.admin.po.User">
+		update t_user set errorCount = #{errorCount},errorTime = #{errorTime}
+		where id = #{id}
+	</update>
+	<!--  -->
+	<select id="selectUserByName" parameterType="com.fh.admin.po.User" resultType="com.fh.admin.po.User">
+		select * from t_user
+		<where>
+			<if test="userName != null and userName != ''">
+				userName = #{userName}
+			</if>
+			<if test="id != null and id != ''">
+				and id != #{id}
+			</if>
+		</where>
+	</select>
+	<!-- 修改用户状态 -->
+	<update id="updateUserStatus">
+		update t_user set errorCount = #{errorCount}
+		where id = #{id}
+	</update>
+	<!-- 修改密码 -->
+	<update id="updateUserPassword">
+		update t_user set password = #{1}
+		where id = #{0}
+	</update>
+</mapper>

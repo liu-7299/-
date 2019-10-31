@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fh.admin.mapper.IRoleMapper" >
+	<!-- 增加 -->
+	<insert id="addRole" parameterType="com.fh.admin.po.Role">
+	  <selectKey keyProperty="id" resultType="java.lang.Long" order="AFTER">
+		select last_insert_id();
+	  </selectKey>
+	  insert into t_role
+	  (name)
+	  values(
+			#{name}
+			)
+	</insert>
+	<!-- 总条数 -->
+	<select id="queryRoleCount" resultType="java.lang.Long">
+		select count(*) from t_role
+	</select>
+	<!-- 全部用户 -->
+	<select id="queryRoleAll" resultType="com.fh.admin.po.Role">
+		select id,name
+		from t_role
+	</select>
+	<select id="queryRole" resultType="com.fh.admin.po.Role">
+			select id,name
+			from t_role
+			order by id desc
+			limit #{start},#{length}
+	</select>
+	<!-- 回显 -->
+	<select id="queryRoleById" parameterType="java.lang.Long" resultType="com.fh.admin.po.Role">
+		select id,name
+		from t_role
+		where id = #{id}
+	</select>
+	<!-- 删除单个 -->
+	<delete id="deleteRoleById" parameterType="java.lang.Long">
+		delete from t_role
+		where id = #{id}
+	</delete>
+	<!-- 修改 -->
+	<update id="updateRole" parameterType="com.fh.admin.po.Role">
+		update t_role
+		<set>
+			<if test="name != null and name != ''">
+				name = #{name},
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+	<!-- 添加role or menu中间表-->
+	<insert id="addRoleOrMenu" parameterType="com.fh.admin.po.RoleOrMenu">
+		insert into t_role_menu
+	  (rid,mid) values
+	  <foreach collection="list" item="rom" separator=",">
+		  (#{rom.rid},#{rom.mid})
+	  </foreach>
+	</insert>
+	<!-- 删除中间表数据 -->
+	<delete id="deleteRoleOrMenu" parameterType="java.lang.Long">
+		delete from t_role_menu
+		where rid = #{roleId}
+	</delete>
+	<!-- 查询中间表 -->
+	<select id="queryRoleOrMenu" parameterType="java.lang.Long" resultType="java.lang.Long">
+		select mid from t_role_menu
+		where rid = #{id}
+	</select>
+	<!--  -->
+	<select id="queryRoleCountDel" parameterType="java.lang.Long" resultType="java.lang.Integer">
+		select count(*) from t_role_user
+		where rrid = #{id}
+	</select>
+</mapper>

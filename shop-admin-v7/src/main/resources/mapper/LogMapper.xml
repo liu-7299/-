@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fh.admin.mapper.ILogMapper" >
+
+	<!-- 分页条件 -->
+	<sql id="log_page">
+		<where>
+			<if test="userName != null and userName != ''">
+				and userName LIKE CONCAT('%',#{userName},'%')
+			</if>
+			<if test="realName != null and realName != ''">
+				and realName LIKE CONCAT('%',#{realName},'%')
+			</if>
+			<if test="createTimeMin != null">
+				and createTime >= #{createTimeMin}
+			</if>
+			<if test="createTimeMax != null">
+				and createTime &lt;= #{createTimeMax}
+			</if>
+			<if test="status != null">
+				and status = #{status}
+			</if>
+			<if test="info != null and info != ''">
+				and info = LIKE CONCAT('%',#{info},'%')
+			</if>
+		</where>
+	</sql>
+
+	<insert id="addLog" parameterType="com.fh.admin.po.Log">
+		insert into t_log
+		(userName,realName,info,status,errorMsg,createTime,detail,content)
+		values (
+			#{userName},
+			#{realName},
+			#{info},
+			#{status},
+			#{errorMsg},
+			#{createTime},
+			#{detail},
+			#{content}
+		)
+	</insert>
+
+	<select id="queryLogCount" parameterType="com.fh.admin.param.LogParam" resultType="long">
+		select count(*) from t_log
+		<include refid="log_page"></include>
+	</select>
+
+	<select id="queryLogByPage" parameterType="com.fh.admin.param.LogParam" resultType="com.fh.admin.po.Log">
+		select t.* from (
+		select id,userName,realName,info,status,errorMsg,createTime,detail,content
+		from t_log
+		<include refid="log_page"></include>
+		order by id desc
+		) t
+		limit #{start},#{length}
+	</select>
+
+</mapper>

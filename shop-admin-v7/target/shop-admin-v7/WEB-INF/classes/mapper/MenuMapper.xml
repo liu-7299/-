@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fh.admin.mapper.IMenuMapper" >
+
+	<select id="queryMenu" resultType="com.fh.admin.po.Menu">
+		select id,name,pid,type,url from t_menu
+	</select>
+
+	<insert id="addMenu" parameterType="com.fh.admin.po.Menu">
+		<selectKey keyProperty="id" resultType="java.lang.Long" order="AFTER">
+			select last_insert_id();
+		</selectKey>
+		insert into t_menu (name,pid,type,url)
+		values(#{name},#{pid},#{type},#{url})
+	</insert>
+
+	<update id="updateMenu" parameterType="com.fh.admin.po.Menu">
+		update t_menu
+		<set>
+			<if test="name != null and name != ''">
+				name = #{name},
+			</if>
+			<if test="pid != null and pid != ''">
+				pid = #{pid},
+			</if>
+			<if test="type != null and type != ''">
+				type = #{type},
+			</if>
+			<if test="url != null and url != ''">
+				url = #{url},
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+
+	<delete id="deleteMenuAll">
+		delete from t_menu where id in
+		<foreach collection="array" item="ids" open="(" separator="," close=")">
+			#{ids}
+		</foreach>
+	</delete>
+
+	<select id="queryMentCountByDel" resultType="java.lang.Integer">
+		select count(*) from t_role_menu where mid in
+		<foreach collection="array" item="ids" open="(" separator="," close=")">
+			#{ids}
+		</foreach>
+	</select>
+	<!-- 动态导航条 -->
+	<select id="queryMenuByUserId" parameterType="long" resultType="com.fh.admin.po.Menu">
+		select id,name,pid,type,url from t_menu where id in (
+			select mid from t_role_menu where rid in (
+				select rrid from t_role_user where uuid = #{id}
+			)
+		) and id != 1 and type = 1
+	</select>
+	<!-- 拥有权限 -->
+	<select id="queryMenuOrUser" resultType="com.fh.admin.po.Menu">
+		select tm.id id,tm.name name,tm.pid pid,tm.type type,tm.url url from
+		t_menu tm left join t_role_menu trm on tm.id = trm.mid
+		left join t_role_user tru  on trm.rid = tru.rrid
+		where tru.uuid = #{id}
+	</select>
+	<!-- 全部权限 -->
+	<select id="queryMenuUser" resultType="com.fh.admin.po.Menu">
+		select id,name,pid,type,url from t_menu
+	</select>
+</mapper>

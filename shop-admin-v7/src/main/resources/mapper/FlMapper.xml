@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fh.admin.mapper.IFlMapper" >
+
+	<!--<select id="queryFl" resultType="com.fh.admin.po.Fl">
+		select id,name,pid from t_fl
+	</select>-->
+	<!-- 添加 -->
+	<insert id="addFl" parameterType="com.fh.admin.po.Fl">
+		<selectKey keyProperty="id" resultType="java.lang.Integer" order="AFTER">
+			select last_insert_id();
+		</selectKey>
+	  insert into t_fl
+	  (name,pid)
+	  values(
+			#{name},
+			#{pid}
+			)
+	</insert>
+	<!-- 修改 -->
+	<update id="updateFl" parameterType="com.fh.admin.po.Fl">
+		update t_fl
+		<set>
+			<if test="name != null and name != ''">
+				name = #{name},
+			</if>
+			<if test="pid != null and pid != ''">
+				pid = #{pid},
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+	<!-- 删除指定 -->
+	<delete id="deleteFlById" parameterType="java.lang.Integer">
+		delete from t_fl where id = #{id}
+	</delete>
+	<!-- 删除所有 -->
+	<delete id="deleteFl">
+		delete from t_fl where id in
+		<foreach collection="array" item="ids" open="(" separator="," close=")">
+			<!--collection表示类型，数组是array,集合是List,item 是一个变量名,open表示左括号,separator是逗号,close是右括号-->
+			#{ids}
+		</foreach>
+	</delete>
+</mapper>

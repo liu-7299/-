@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fh.admin.mapper.IBrandMapper" >
+
+	<select id="queryBrandCount" resultType="java.lang.Long">
+		select count(*) from t_brand
+	</select>
+
+	<select id="queryBrandPage" parameterType="com.fh.admin.commons.Page" resultType="com.fh.admin.po.Brand">
+		select id,name,imgPath,sell,sort
+			from t_brand
+			order by field(sort,#{sortp}) desc,sell desc,sort desc,id desc
+			limit #{start},#{length}
+	</select>
+
+	<!--<insert id="addBrand" parameterType="com.fh.admin.po.Brand">
+		insert into t_brand
+	  	(name,imgPath,sell,sort)
+	  	values(
+			#{name},
+			#{imgPath},
+			#{sell},
+			#{sort}
+			)
+	</insert>
+
+	<delete id="deleteBrand" parameterType="java.lang.Long">
+		delete from t_brand
+		where id = #{id}
+	</delete>
+
+	<select id="queryBrandById" parameterType="java.lang.Long" resultType="com.fh.admin.po.Brand">
+		select id,name,imgPath,sell from t_brand where id = #{id}
+	</select>
+	<update id="updateBrand" parameterType="com.fh.admin.po.Brand">
+		update t_brand
+		<set>
+			<if test="name != null and name != ''">
+				name = #{name},
+			</if>
+			<if test="imgPath != null and imgPath != ''">
+				imgPath = #{imgPath},
+			</if>
+			<if test="sell != null and sell >= 0">
+				sell = #{sell},
+			</if>
+		</set>
+		where id = #{id}
+	</update>-->
+
+</mapper>
