@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <title>前端</title>
+    <link href="/js/bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="icon" href="/js/shop/assets/img/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="/js/webCss/css/webbase.css" />
+    <link rel="stylesheet" type="text/css" href="/js/webCss/css/pages-JD-index.css" />
+    <link rel="stylesheet" type="text/css" href="/js/webCss/css/widget-jquery.autocomplete.css" />
+    <link rel="stylesheet" type="text/css" href="/js/webCss/css/widget-cartPanelView.css" />
+</head>
+<body>
+
+<div id="navHtml"></div>
+
+<div>
+
+</div>
+
+<div id="nav-bottom">
+    <!--顶部-->
+    <div class="nav-top">
+        <!--头部-->
+        <div class="header">
+            <div class="py-container">
+                <div class="yui3-g NavList">
+                    <div class="yui3-u Left all-sort">
+                        <h4>全部商品分类</h4>
+                    </div>
+                    <div class="yui3-u Center navArea">
+                        <ul class="nav">
+                            <li class="f-item">服装城</li>
+                            <li class="f-item">美妆馆</li>
+                        </ul>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--列表-->
+<div class="sort">
+    <div class="py-container">
+        <div class="yui3-g SortList ">
+            <div class="yui3-u Left all-sort-list">
+                <div class="all-sort-list2" id="flList">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="panel panel-success">
+        <div class="panel-heading">热销品牌</div>
+        <div class="panel-body">
+            <div class="row" id="brandList">
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-success">
+        <div class="panel-heading">商品列表</div>
+        <div class="panel-body">
+            <div class="row" id="commList">
+            </div>
+        </div>
+    </div>
+</div>
+
+    <div id="commNone" style="display: none">
+        <div class="col-sm-6 col-md-4">
+            <div class="thumbnail">
+                <img src="##imgPath##" alt="..." style="height: 100px;">
+                <div class="caption">
+                    <h3>商品名:##name##</h3>
+                    <p>价格:##price##</p>
+                    <p><a href="#" class="btn btn-primary" role="button">购买</a> <a href="#" class="btn btn-default" role="button" onclick="addCart('##commId##',1)">加入购物车</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="brandNone" style="display: none">
+        <div class="col-sm-6 col-md-3">
+            <div class="thumbnail">
+                <img src="##imgPath##" alt="..." style="height: 100px;">
+                <div class="caption">
+                    <h3>品牌名:##name##</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <script src="/js/jquery-3.3.1.js"></script>
+    <script src="/js/jquery.cookie.min.js"></script>
+    <script src="/js/cookie.js"></script>
+    <script src="/js/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/js/nav.js"></script>
+    <script src="/js/bootbox/bootbox.min.js">//bootbox</script>
+    <script src="/js/bootbox/bootbox.locales.min.js">//bootbox</script>
+    <script>
+
+        $(function(){
+            cookie();
+            getCommodity();
+            getBrandBySell();
+            initFl();
+        })
+
+
+
+        function cookie(){
+            //document.cookie is a string, using split() function to get cookie date in array form
+            var arr = document.cookie.split('');
+            var str = arr.toString().replace(/,/g,"");
+            console.log(str);
+        }
+
+        function initCss() {
+            $('.all-sort-list2 > .item').hover(function() {
+                //父类分类列表容器的高度
+                $(this).addClass('hover');
+                $(this).children('.item-list').css('display', 'block');
+            }, function() {
+                $(this).removeClass('hover');
+                $(this).children('.item-list').css('display', 'none');
+            });
+
+            $('.item > .item-list > .close').click(function() {
+                $(this).parent().parent().removeClass('hover');
+                $(this).parent().hide();
+            });
+        }
+
+        var flList;
+        function initFl(){
+            $.get({
+                url:"http://localhost:8081/fl",
+                success:function(ref){
+                    if(ref.code == 200){
+                        flList = ref.data;
+                        var flArr1 = havingFlById(1);
+                        var flStr = "";
+                        for(var i=0;i<flArr1.length;i++){
+                            flStr += '<div class="item"><h3><a href="">'+flArr1[i].name+'</a></h3>';
+                            flStr += '<div class="item-list clearfix"><div class="subitem">';
+                            var flArr2 = havingFlById(flArr1[i].id);
+                            for(var j=0;j<flArr2.length;j++){
+                                flStr += '<dl class="fore'+(j+1)+'"><dt><a href="">'+flArr2[j].name+'</a></dt><dd>';
+                                var flArr3 = havingFlById(flArr2[j].id);
+                                for(var x=0;x<flArr3.length;x++){
+                                    flStr += '<em><a href="">'+flArr3[x].name+'</a></em>';
+                                }
+                                flStr += '</dd></dl>';
+                            }
+                            flStr += '</div></div></div>';
+                        }
+                        $("#flList").html(flStr);
+                        initCss();
+                    }
+                }
+            })
+        }
+
+        function havingFlById(id){
+            var newArr = [];
+            for(var i=0;i<flList.length;i++){
+                if(id == flList[i].pid) newArr.push(flList[i]);
+            }
+            return newArr;
+        }
+
+        function getCommodity(){
+            $.ajax({
+                url:"http://localhost:8081/commodity",
+                success:function(ref){
+                    var v_commstr = $("#commNone").html();
+                    var list = ref.data;
+                    for(var i=0;i<list.length;i++){
+                        var comm = list[i];
+                        $("#commList").append(v_commstr.replace("##name##",comm.name)
+                            .replace("##price##",comm.price)
+                            .replace("##commId##",comm.id)
+                            .replace("##imgPath##","http://192.168.217.128/img/"+comm.imgPath));
+
+                    }
+                }
+            })
+        }
+
+        function getBrandBySell(){
+            $.ajax({
+                url:"http://localhost:8081/brand",
+                success:function(ref){//queryBrandBySell
+                    if(ref.code == 200){
+                        var v_brandstr = $("#brandNone").html();
+                        var list = ref.data;
+                        for(var i=0;i<list.length;i++){
+                            var brand = list[i];
+                            $("#brandList").append(v_brandstr.replace(/##imgPath##/g,"http://192.168.217.128/img/"+brand.imgPath).replace(/##name##/g,brand.name));
+                        }
+                    }
+                }
+            })
+        }
+
+    </script>
+</body>
+</html>
